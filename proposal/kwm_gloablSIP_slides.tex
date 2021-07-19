@@ -1,0 +1,177 @@
+\documentclass[pdf]{beamer}
+\usetheme{CambridgeUS}
+\definecolor{WiLabRed}{RGB}{197,18,48}
+\setbeamercolor{frametitle}{fg=white,bg=WiLabRed}
+\setbeamercolor{progress bar}{fg=WiLabRed!90}
+\setbeamercolor{palette tertiary}{fg=white,bg=WiLabRed}
+\setbeamercolor{title separator}{fg=WiLabRed!90}
+\setbeamercolor{progress bar in section page}{fg=WiLabRed!90}
+\setbeamercolor{background canvas}{bg=white}
+\setbeamercolor{alerted text}{fg=WiLabRed!90}
+\setbeamertemplate{headline}
+
+
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.3\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}Kyle W. McClintick
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.6\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}Email: \Letter kwmcclintick@wpi.edu
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.1\paperwidth,ht=2.25ex,dp=1ex,center]{date in head/foot}%
+    \insertframenumber{} / \inserttotalframenumber\hspace*{1ex}
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+
+\usepackage{appendixnumberbeamer}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage[scale=2]{ccicons}
+\usepackage{pgfplots}
+\usepgfplotslibrary{dateplot}
+\usepackage{xspace}
+\newcommand{\themename}{\textbf{\textsc{metropolis}}\xspace}
+\graphicspath{{./Images/}{./Misc/}}
+\usepackage{marvosym}
+\usepackage{subfig}
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usepackage{caption}
+
+
+
+
+\title{Adaptive Physical Layer Protocol for Mobile Wireless Communications}
+\date{November 2019}
+\author{\textbf{Kyle McClintick, Mac Carr, Brian Nguon} \\ Department of Electrical and Computer Engineering}
+\institute{ \hfill\includegraphics[height=1.5cm]{wilab_logo-A70916.eps}\hspace*{1.7cm}\includegraphics[height=1.5cm]{WPI_Inst_Prim_FulClr.eps}}
+
+\begin{document}
+
+\captionsetup[subfigure]{labelformat=empty}
+
+\maketitle
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Agent and Environment}
+\begin{figure}
+\centering
+\includegraphics[width=0.95\linewidth,keepaspectratio]{Images/flow.png}
+\caption{In a wireless transmission, many parameters drive the electrical, electromagnetic, and digital aspects of the signal to maximize certain metrics. (Paulo F. available online: https://digitalcommons.wpi.edu/etd-dissertations/199/)}
+\end{figure}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Policy Net and Reward Net}
+\begin{figure}
+\centering
+\includegraphics[width=0.75\linewidth,keepaspectratio]{Images/rlnn.png}
+\caption{A policy net can serve to choose parameters. An "exploration NN" can choose to train the "exploitation NN" (policy net) only using high reward actions (much like prioritized experience replay from class). Due to the highly time varying nature of space communiations, simply parameterizing action space via a policy net does not generalize fast or accurately enough.}
+\end{figure}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Policy Net Ensemble}
+\begin{figure}
+\centering
+\includegraphics[width=0.6\linewidth,keepaspectratio]{Images/smart_explore.png}
+\caption{Additionally, and ensemble of NNs can be implemented in the policy net to remove additional variance via averaging. A Levenberg Marquardt backproapgation training algorithm was used in P.F.'s work. The NN had three fully-connected layers without bias: two hidden layers that contain 7 and 50 neurons each (resulting in
+449 weight parameters per NN), both using a log-sigmoid transfer function, and the output layer with one neuron using the standard linear transfer function}
+\end{figure}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{P.F.'s Results}
+\begin{figure}
+\centering
+\includegraphics[width=0.6\linewidth,keepaspectratio]{Images/results.png}
+\caption{High performance was achieved. Actions involved data rates, error code rates, energy per bit, pulse shaping filter rolloff factor, modulation order, and transmit power. States were the recieved signal's throughput ($T_{RL}$), Bit Error Rate (BER), power, and bandwidth, where rewards are a weighted sum of BER with respect to theoretical limit $BER_{min}/BER$, throughput with respect to its limit $T_{RL}/T_{RL_{max}}$, power consumed with respect to its limit $P_{RL_{min}}/P_{RL}$, and legal bandwidth usage ($-1$ reward if $W > BW$). }
+\end{figure}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Project Goals}
+While P.F.'s work dealt with space communications, we will focus on grounded radios simulating high density, high speed mobile data traffic. Some key differences will include:
+\begin{enumerate}
+\item A less time varying wireless channel (no ionosphere, limited weather and doppler)
+\item Higher power, more structured interference (other mobile users)
+\item A larger emphasis on data throughput, and the additional reward of latency and other Quality of Service (QoS) metrics unimportant in certain space operations
+\end{enumerate}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Project Goals}
+Each of the following accomplishments would make the project a success in our eyes (the more the better!):
+\begin{enumerate}
+\item Maintain low BER of data known by reciever by choosing one of three demodulators (of which the transmitter is using one)
+\item Change data to be packets where each has a header known by the reciever (which BER can be calculated from) but is mostly (maybe 90\%) unknown data bits (a payload)
+\item Add pulse shaping filters to the transmitter, of which the receiver will need a new action space (or several) to learn a matched filter
+\item Add Additive White Gaussian Noise (AWGN) by switching from coax to wireless transmissions
+\item Add structured noise in the form of a third, interfering radio behaving similarly (sending packets) but different to the transmitter (maybe different carrier frequency, modulation, pulse shaping filter)
+\end{enumerate}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Schedule - Gantt Chart}
+\begin{figure}
+\centering
+\includegraphics[width=1\linewidth,keepaspectratio]{Images/prj4_scheudle.eps}
+\end{figure}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Testbed}
+\begin{figure}
+\centering
+\includegraphics[width=0.75\linewidth,keepaspectratio]{Images/testbed_rl.jpg}
+\caption{Overview of initial testbed}
+\end{figure}
+\end{frame}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Testbed}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\begin{figure}
+\centering
+\includegraphics[width=0.7\linewidth,keepaspectratio]{Images/n210s.jpg}
+\caption{Ettus Labs N210 Universal Software Radio Peripheral (USRP) Software Defined Radios (SDRs) are connected via coaxial cables. Ethernet feeds data to/from radios to/from server.}
+\end{figure}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\begin{figure}
+\centering
+\includegraphics[width=0.7\linewidth,keepaspectratio]{Images/server_back.jpg}
+\caption{With 10 ethernet ports, the experiment can scale with many other radios if time permits to act as other users or as sources of structured noise/interference.}
+\end{figure}
+\end{column}
+\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Testbed}
+\begin{figure}
+\centering
+\includegraphics[width=0.75\linewidth,keepaspectratio]{Images/grc.png}
+\caption{GNU Radio Companion (GRC) is the leading software for programming SDRs. The visual based language allows the user to code Out of Tree (OoT) blocks in C++ or Python, as well as manage block parameters real-time in Python using the top block.}
+\end{figure}
+\end{frame}
+
+
+
+
+\end{document}

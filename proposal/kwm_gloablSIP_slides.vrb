@@ -1,0 +1,6 @@
+\frametitle{Testbed}
+\begin{figure}
+\centering
+\includegraphics[width=0.75\linewidth,keepaspectratio]{Images/grc.png}
+\caption{GNU Radio Companion (GRC) is the leading software for programming SDRs. The visual based language allows the user to code Out of Tree (OoT) blocks in C++ or Python, as well as manage block parameters real-time in Python using the top block.}
+\end{figure}
