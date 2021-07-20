@@ -1,5 +1,3 @@
 # CS525-RL
-
-
-![ScreenShot](rlfinalprj.jpg)
-
+## Project 1
+-
