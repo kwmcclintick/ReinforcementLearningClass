@@ -2,5 +2,5 @@
 homework assignments and projects completed by kyle mcclintick
 
 
-![ScreenShot](rlfinalprj.pdf)
+![ScreenShot](rlfinalprj.jpg)
 
